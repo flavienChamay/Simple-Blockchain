@@ -1,7 +1,6 @@
 from functools import reduce
 import json
 from hash_util import hash_block
-#import pickle
 from block import Block
 from transaction import Transaction
 from verification import Verification
@@ -12,10 +11,18 @@ MINING_REWARD = 10
 
 class Chain:
     def __init__(self, hosting_node_id):
+        """
+        Constructor of the Chain class
+        :param hosting_node_id: the unique ID of the host of the node
+        :var blockchain: the list of blocks of the blockchain
+        :var open_transactions: the list of transactions
+        :var load_data: load the data from file if it exists
+        :var hosting_node: the unique ID of the node
+        """
         # The starting block for the blockchain
         genesis_block = Block(0, '', [], 100, 0)
         # Initializing the blockchain list with genesis block
-        self.blockchain = [genesis_block]
+        self.chain = [genesis_block]
         # Unhandled transactions
         self.open_transactions = []
         # Loading the data from file if it exists
@@ -24,35 +31,33 @@ class Chain:
         self.hosting_node = hosting_node_id
 
     def save_data(self):
+        """
+        Saves the whole blockchain into a file named blockchain.txt
+        :return: A file blockchain.txt if it does not exists or write the new data of the blockchain into the file
+        """
         try:
-            ####JSON part
             with open('blockchain.txt', mode='w') as file:
-                saveable_chain = [block.__dict__ for block in [Block(block_el.index, block_el.previous_hash, [tx.__dict__ for tx in block_el.transactions] , block_el.proof, block_el.timestamp) for block_el in self.blockchain]]
+                saveable_chain = [block.__dict__ for block in [Block(block_el.index, block_el.previous_hash, [tx.__dict__ for tx in block_el.transactions] , block_el.proof, block_el.timestamp) for block_el in self.chain]]
                 file.write(json.dumps(saveable_chain))
                 file.write('\n')
                 saveable_tx = [tx.__dict__ for tx in self.open_transactions]
                 file.write(json.dumps(saveable_tx))
-
-            ###Pickle part
-            # with open('blockchain.p', mode='wb') as file:
-            #     save_data = {
-            #         'chain': blockchain,
-            #         'ot': open_transactions
-            #     }
-            #     file.write(pickle.dumps(save_data))
         except IOError:
             print('Saving failed!')
 
     def load_data(self):
-        #JSON version
+        """
+        loads the blockchain from the blockchain.txt file
+        :return: Displays a message if the file is not found
+        """
         try:
             with open('blockchain.txt', mode='r') as file:
                 file_content = file.readlines()
 
                 #Part of the blockchain
-                self.blockchain = json.loads(file_content[0][:-1])
+                self.chain = json.loads(file_content[0][:-1])
                 updated_blockchain = []
-                for block in self.blockchain:
+                for block in self.chain:
                     converted_tx = [Transaction(tx['sender'], tx['recipient'], tx['amount']) for tx in block['transactions']]
                     updated_block = Block(block['index'], block['previous_hash'], converted_tx, block['proof'], block['timestamp'])
                     updated_blockchain.append(updated_block)
@@ -67,15 +72,12 @@ class Chain:
         except (IOError, IndexError):
             print('File not found!')
 
-        #Pickle version
-        # with open('blockchain.p', mode='rb') as file:
-            # file_content = pickle.loads(file.read())
-            # global blockchain, open_transactions
-            # blockchain = file_content['chain']
-            # open_transactions = file_content['ot']
-
     def proof_of_work(self):
-        last_block = self.blockchain[-1]
+        """
+        Verify the integrity of the blockchain
+        :return: the proof number of the blockchain
+        """
+        last_block = self.chain[-1]
         last_hash = hash_block(last_block)
         proof = 0
         verifier = Verification()
@@ -88,9 +90,9 @@ class Chain:
         Get last value of the blockchain
         :return: the last value to the block chain
         """
-        if len(self.blockchain) < 1:
+        if len(self.chain) < 1:
             return None
-        return self.blockchain[-1]
+        return self.chain[-1]
 
     def add_transaction(self, recipient, sender, amount=1.0):
         """
@@ -114,7 +116,7 @@ class Chain:
         Mine a block to the blockchain
         :return: True if the block has been successfully added to the blockchain
         """
-        last_block = self.blockchain[-1]
+        last_block = self.chain[-1]
         hashed_block = hash_block(last_block)
 
         proof = self.proof_of_work()
@@ -122,8 +124,8 @@ class Chain:
         reward_transaction = Transaction('MINING', self.hosting_node, MINING_REWARD)
         copied_transaction = self.open_transactions[:]
         copied_transaction.append(reward_transaction)
-        block = Block(len(self.blockchain), hashed_block, copied_transaction, proof)
-        self.blockchain.append(block)
+        block = Block(len(self.chain), hashed_block, copied_transaction, proof)
+        self.chain.append(block)
         self.open_transactions = []
         self.save_data()
         return True
@@ -135,14 +137,14 @@ class Chain:
         """
         participant = self.hosting_node # Participant is a unique ID
         tx_sender = [[tx.amount for tx in block.transactions
-                      if tx.sender == participant] for block in self.blockchain]
+                      if tx.sender == participant] for block in self.chain]
         open_tx_sender = [tx.amount for tx in self.open_transactions
                           if tx.sender == participant]
         tx_sender.append(open_tx_sender)
         amount_sent = reduce(lambda tx_sum, tx_amt: tx_sum + sum(tx_amt) if len(tx_amt) > 0 else tx_sum + 0, tx_sender, 0)
 
         tx_recipient = [[tx.amount for tx in block.transactions
-                         if tx.recipient == participant] for block in self.blockchain]
+                         if tx.recipient == participant] for block in self.chain]
         amount_received = reduce(lambda tx_sum, tx_amt: tx_sum + sum(tx_amt) if len(tx_amt) > 0 else tx_sum + 0, tx_recipient, 0)
 
         return amount_received - amount_sent
