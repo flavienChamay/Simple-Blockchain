@@ -123,6 +123,7 @@ def get_ui():
     """
     return "This is it: you are on an awesome website!"
 
+
 @webApp.route('/chain', methods=['GET'])
 def get_chain():
     """
@@ -133,6 +134,7 @@ def get_chain():
     for dict_block in dictionnary_chain:
         dict_block['transactions'] = [tx.__dict__ for tx in dict_block['transactions']]
     return jsonify(dictionnary_chain), 200 #returns the chain in the form of a dictionnary and with a code 
+
 
 @webApp.route('/balance', methods=['GET'])
 def get_balance():
