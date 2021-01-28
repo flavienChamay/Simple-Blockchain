@@ -228,15 +228,16 @@
             methods: {
                 onCreateWallet: function () {
                     // Send Http request to create a new wallet (and return keys)
-                    if (Math.random() > 0.5) {
-                        this.error = null
-                        this.success = 'Successfully stored transaction!';
-                        this.wallet = { private_key: 'fsde2523tfasg234twfg24qafew', public_key: '532fsdarf23rf' };
-                    } else {
-                        this.success = null;
-                        this.error = 'Something went wrong!';
-                        this.wallet = null;
-                    }
+		    var vm = this;
+                    axios.post('/wallet')
+			.then(function (response) {
+			    vm.error = null;
+			    vm.success = 'Created Wallet! Public Key: ' + response.data.public_key + ', Private Key: ' + response.data.private_key;
+			})
+			.catch(function (error) {
+			    vm.success = null;
+			    vm.error = error.data.message
+			});
                 },
                 onLoadWallet: function () {
                     // Send Http request to load an existing wallet (from a file on the server)
@@ -275,15 +276,27 @@
                     if (this.view === 'chain') {
                         // Load blockchain data via sendint a request with Axios
 			
-			//var vm = this
-			axios.get('localhost:5000/chain')
+			var vm = this;
+			this.dataLoading = true
+			axios.get('/chain')
 			    .then(function (response){
 				//Use console.log to see in the browser all the mechanism of the action
-				console.log(response)
+				vm.blockchain = response.data
+				vm.dataLoading = false
 			    })
+			    .catch(function (error) {
+				vm.dataLoading = false
+				vm.error = 'Something went wrong.'
+			    });
                     } else {
                         // Load transaction data
-                        
+                        var vm = this;
+			axios.get('/transactions')
+			    .then(function (response){
+				//Use console.log to see in the browser all the mechanism of the action
+				vm.openTransactions = response.data
+				vm.dataLoading = false
+			    })
                     }
                 }
             }
