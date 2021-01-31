@@ -238,11 +238,12 @@
 				public_key: response.data.public_key,
 				private_key: response.data.private_key
 			    }
+			    vm.funds = response.data.funds;
 			    vm.walletLoading = false;
 			})
 			.catch(function (error) {
 			    vm.success = null;
-			    vm.error = error.data.message;
+			    vm.error = error.response.data.message;
 			    vm.wallet = null;
 			    vm.walletLoading = false;
 			});
@@ -251,7 +252,7 @@
                     // Send Http request to load an existing wallet (from a file on the server)
 		    var vm = this;
 		    this.walletLoading = true
-		    axios.post('/wallet')
+		    axios.get('/wallet')
 			.then(function (response) {
 			    vm.error = null;
 			    vm.success = 'Created Wallet! Public Key: ' + response.data.public_key + ', Private Key: ' + response.data.private_key;
@@ -260,11 +261,11 @@
 				private_key: response.data.private_key
 			    }
 			    vm.funds = response.data.funds;
-			    vm.walletLoading = false
+			    vm.walletLoading = false;
 			})
 			.catch(function (error) {
 			    vm.success = null;
-			    vm.error = error.data.message;
+			    vm.error = error.response.data.message;
 			    vm.wallet = null;
 			    vm.walletLoading = false;
 			});
@@ -274,11 +275,11 @@
                     // Send Transaction to backend
 		    this.txLoading = true;
 		    var vm = this;
-                    axios.post('/transation', {
+                    axios.post('/transaction', {
 			recipient: this.outgoingTx.recipient,
 			amount: this.outgoingTx.amount
 		    })
-			.then(function(response){
+			.then(function(response) {
 			    vm.error = null;
 			    vm.success = response.data.message;
 			    console.log(response.data);
@@ -287,7 +288,7 @@
 			})
 			.catch(function (error) {
 			    vm.success = null;
-			    vm.error = error.data.message;
+			    vm.error = error.response.data.message;
 			    vm.txLoading = false;
 			});
 
@@ -303,7 +304,7 @@
 			})
 			.catch(function (error) {
 			    vm.success = null;
-			    vm.error = error.data.message;
+			    vm.error = error.response.data.message;
 			});
                 },
                 onLoadData: function () {
@@ -331,6 +332,10 @@
 				vm.openTransactions = response.data;
 				vm.dataLoading = false;
 			    })
+			.catch(function (error) {
+				vm.dataLoading = false;
+				vm.error = 'Something went wrong!';
+			});
                     }
                 }
             }
