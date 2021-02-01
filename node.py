@@ -1,5 +1,5 @@
 # request import is usefull to extract incoming requests from servers
-from flask import Flask, jsonify, request 
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
 from wallet import Wallet
@@ -9,6 +9,14 @@ webApp = Flask(__name__)
 wallet = Wallet() #Initialize a wallet in the object wallet
 blockchain = BlockChain(wallet.public_key) #Initialize the blockchain of the wallet
 CORS(webApp)
+
+
+@webApp.route('/', methods=['GET'])
+def get_ui():
+    """
+    This function controls the UI of the main program
+    """
+    return send_from_directory('ui', 'node.html')
 
 
 @webApp.route('/transactions', methods=['GET'])
@@ -113,15 +121,6 @@ def add_transaction():
             'message' : 'Creating a transaction failed.',
         }
         return jsonify(response), 500 # Then we return the response and an internal server error 
-    
-    
-
-@webApp.route('/', methods=['GET'])
-def get_ui():
-    """
-    This function controls the UI of the main program
-    """
-    return "This is it: you are on an awesome website!"
 
 
 @webApp.route('/chain', methods=['GET'])
@@ -175,7 +174,7 @@ def mine():
         }
         return jsonify(response), 500 #returns the response and a server error code of 500
 
-if __name__ == 'main':
+if __name__ == '__main__':
     """
     Condition that set the flask server to the localhost adress : 127.0.0.1 or localhost
     To run it in the terminal write:
