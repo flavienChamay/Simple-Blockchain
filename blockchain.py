@@ -30,6 +30,8 @@ class BlockChain:
         self.load_data()
         # Name of the host of the blockchain
         self.hosting_node = hosting_node_id
+        # Set of all the participants (nodes) in the network
+        self.__peer_nodes = set()
 
     @property
     def chain(self):

@@ -196,12 +196,8 @@
         new Vue({
             el: '#app',
             data: {
-                blockchain: [
-		    
-                ],
-		openTransactions: [
-
-		],
+                blockchain: [],
+		openTransactions: [],
                 wallet: null,
                 view: 'chain',
                 walletLoading: false,
@@ -229,7 +225,7 @@
                 onCreateWallet: function () {
                     // Send Http request to create a new wallet (and return keys)
 		    var vm = this;
-		    this.walletLoading = true
+		    this.walletLoading = true;
                     axios.post('/wallet')
 			.then(function (response) {
 			    vm.error = null;
@@ -279,19 +275,18 @@
 			recipient: this.outgoingTx.recipient,
 			amount: this.outgoingTx.amount
 		    })
-			.then(function(response) {
-			    vm.error = null;
-			    vm.success = response.data.message;
-			    console.log(response.data);
-			    vm.funds = response.data.funds;
-			    vm.txLoading = false;
-			})
-			.catch(function (error) {
-			    vm.success = null;
-			    vm.error = error.response.data.message;
-			    vm.txLoading = false;
-			});
-
+		    .then(function(response) {
+			vm.error = null;
+			vm.success = response.data.message;
+			console.log(response.data);
+			vm.funds = response.data.funds;
+			vm.txLoading = false;
+		    })
+		    .catch(function (error) {
+			vm.success = null;
+			vm.error = error.response.data.message;
+			vm.txLoading = false;
+		    });  
                 },
                 onMine: function() {
 		    var vm = this
