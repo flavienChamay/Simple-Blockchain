@@ -174,9 +174,32 @@ def mine():
         }
         return jsonify(response), 500 #returns the response and a server error code of 500
 
+
+@webApp.route('/node', methods=['POST']) #POST because we want to add something to the server
+def add_node():
+    # Extracts the values by accessing the request
+    values = request.get_json()
+    if not values:
+        response = {
+            'message': 'No data attached.'
+        }
+        return jsonify(response), 400
+    if 'node' not in values:
+        response = {
+            'message': 'No node data found.'
+        }
+        return jsonify(response), 400
+    node = values.get('node')
+    blockchain.add_peer_node(node)
+    response = {
+        'message': 'Node added successfully', 
+        'all_nodes': blockchain.get_peer_nodes()
+    }
+    return jsonify(response), 201
+
 if __name__ == '__main__':
     """
-    Condition that set the flask server to the localhost adress : 127.0.0.1 or localhost
+    Condition that set the flask server to the localhost address : 127.0.0.1 or localhost
     To run it in the terminal write:
     FLASK_APP=node.py flask run
     """

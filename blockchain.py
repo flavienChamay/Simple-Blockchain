@@ -24,13 +24,13 @@ class BlockChain:
         genesis_block = Block(0, '', [], 100, 0)
         # Initializing the blockchain list with genesis block
         self.chain = [genesis_block]
-        # Unhandled transactions
+        # Unhandled transactions, private attribute
         self.__open_transactions = []
         # Loading the data from file if it exists
         self.load_data()
         # Name of the host of the blockchain
         self.hosting_node = hosting_node_id
-        # Set of all the participants (nodes) in the network
+        # Set of all the participants (nodes) in the network, private attribute
         self.__peer_nodes = set()
 
     @property
@@ -69,9 +69,12 @@ class BlockChain:
                 file.write('\n')
                 saveable_tx = [tx.__dict__ for tx in self.__open_transactions]
                 file.write(json.dumps(saveable_tx))
+                file.write('\n')
+                file.write(json.dumps(list(self.__peer_nodes))) # Updates the number of nodes in the network
         except IOError:
             print('Saving failed!')
 
+            
     def load_data(self):
         """
         loads the blockchain from the blockchain.txt file
@@ -90,12 +93,14 @@ class BlockChain:
                     updated_blockchain.append(updated_block)
                 self.chain = updated_blockchain
                 # Part of the transaction
-                self.__open_transactions = json.loads(file_content[1])
+                self.__open_transactions = json.loads(file_content[1][:-1])
                 updated_transactions = []
                 for tx in self.__open_transactions:
                     updated_tx = Transaction(tx['sender'], tx['recipient'], tx['signature'], tx['amount'])
                     updated_transactions.append(updated_tx)
-                self.__open_transactions = updated_transactions
+                self.__open_transactions = updated_transactions  # Loads the connected nodes
+                peer_nodes = json.loads(file_content[2])
+                self.__peer_nodes = set(peer_nodes)
         except (IOError, IndexError):
             print('File not found!')
 
@@ -182,3 +187,31 @@ class BlockChain:
         amount_received = reduce(lambda tx_sum, tx_amt: tx_sum + sum(tx_amt) if len(tx_amt) > 0 else tx_sum + 0, tx_recipient, 0)
 
         return amount_received - amount_sent
+
+
+    def add_peer_node(self, node):
+        """
+        Adds a new node to the network
+        :return: None
+        :param node: The node URL which should be added
+        """
+        self.__peer_nodes.add(node)
+        self.save_data()
+
+    
+    def remove_peer_node(self, node):
+        """
+        Removes a node to the network
+        :return: None
+        :param node: The node URL which should be removed
+        """
+        self.__peer_nodes.discard(node)
+        self.save_data()
+
+
+    def get_peer_nodes(self):
+        """
+        Returns a list of all the connected peer nodes in the network
+        :return: a list of all connected peer nodes.
+        """
+        return list(self.__peer_nodes)
