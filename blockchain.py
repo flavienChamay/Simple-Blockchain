@@ -11,14 +11,14 @@ MINING_REWARD = 10
 
 
 class BlockChain:
-    def __init__(self, hosting_node_id):
+    def __init__(self, public_key, node_id):
         """
         Constructor of the Chain class
-        :param hosting_node_id: the unique ID of the host of the node
+        :param public_key: the unique ID of the host of the node
         :var blockchain: the list of blocks of the blockchain
         :var open_transactions: the list of transactions
         :var load_data: load the data from file if it exists
-        :var hosting_node: the unique ID of the node
+        :var public_key: the unique ID of the node
         """
         # The starting block for the blockchain
         genesis_block = Block(0, '', [], 100, 0)
@@ -27,9 +27,11 @@ class BlockChain:
         # Unhandled transactions, private attribute
         self.__open_transactions = []
         # Name of the host of the blockchain
-        self.hosting_node = hosting_node_id
+        self.public_key = public_key
         # Set of all the participants (nodes) in the network, private attribute
         self.__peer_nodes = set()
+        #ID of the node
+        self.node_id = node_id
        # Loading the data from file if it exists, must be at the end, after doing all above initialisations
         self.load_data()
 
@@ -63,7 +65,7 @@ class BlockChain:
         :return: A file blockchain.txt if it does not exists or write the new data of the blockchain into the file
         """
         try:
-            with open('blockchain.txt', mode='w') as file:
+            with open('blockchain-{}.txt'.format(self.node_id), mode='w') as file:
                 saveable_chain = [block.__dict__ for block in [Block(block_el.index, block_el.previous_hash, [tx.__dict__ for tx in block_el.transactions] , block_el.proof, block_el.timestamp) for block_el in self.__chain]]
                 file.write(json.dumps(saveable_chain))
                 file.write('\n')
@@ -81,7 +83,7 @@ class BlockChain:
         :return: Displays a message if the file is not found
         """
         try:
-            with open('blockchain.txt', mode='r') as file:
+            with open('blockchain-{}.txt'.format(self.node_id), mode='r') as file:
                 file_content = file.readlines()
 
                 # Part of the blockchain
@@ -133,7 +135,7 @@ class BlockChain:
         :param amount: the amount of the transaction (default = 1.0)
         :return: True if transaction if verified, False if not
         """
-        if self.hosting_node == None:
+        if self.public_key == None:
             return False
         transaction = Transaction(sender, recipient, signature, amount)
         if Verification.verify_transaction(transaction, self.get_balance):
@@ -148,14 +150,14 @@ class BlockChain:
         Mine a block to the blockchain
         :return: True if the block has been successfully added to the blockchain
         """
-        if self.hosting_node == None:
+        if self.public_key == None:
             return None
         last_block = self.__chain[-1]
         hashed_block = hash_block(last_block)
 
         proof = self.proof_of_work()
 
-        reward_transaction = Transaction('MINING', self.hosting_node, '', MINING_REWARD)
+        reward_transaction = Transaction('MINING', self.public_key, '', MINING_REWARD)
         copied_transaction = self.__open_transactions[:]
         for tx in copied_transaction:
             if not Wallet.verify_transaction(tx):
@@ -172,9 +174,9 @@ class BlockChain:
         Get the balance of a participant via his transactions
         :return: the balance between the amount received and the amount sent
         """
-        if self.hosting_node == None: # This tests if the public key exists (referenced by hositng_node)
+        if self.public_key == None: # This tests if the public key exists (referenced by hositng_node)
             return None
-        participant = self.hosting_node # Participant is a unique ID
+        participant = self.public_key # Participant is a unique ID
         tx_sender = [[tx.amount for tx in block.transactions
                       if tx.sender == participant] for block in self.__chain]
         open_tx_sender = [tx.amount for tx in self.__open_transactions

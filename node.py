@@ -6,8 +6,6 @@ from wallet import Wallet
 from blockchain import BlockChain
 
 webApp = Flask(__name__)
-wallet = Wallet() #Initialize a wallet in the object wallet
-blockchain = BlockChain(wallet.public_key) #Initialize the blockchain of the wallet
 CORS(webApp)
 
 
@@ -48,7 +46,7 @@ def create_keys():
     if wallet.save_keys(): # If the saving key funcitonnality succeed than displays the public and private keys and a success code for the server
         #We must define a global variable blockchain because 
         global blockchain
-        blockchain = BlockChain(wallet.public_key)
+        blockchain = BlockChain(wallet.public_key, port)
         response = {
             'public_key' : wallet.public_key,
             'private_key' : wallet.private_key,
@@ -70,7 +68,7 @@ def load_keys():
     if wallet.load_keys():
         #We must define a global variable blockchain because 
         global blockchain
-        blockchain = BlockChain(wallet.public_key)
+        blockchain = BlockChain(wallet.public_key, port)
         response = {
             'public_key' : wallet.public_key,
             'private_key' : wallet.private_key,
@@ -246,4 +244,13 @@ if __name__ == '__main__':
     To run it in the terminal write:
     FLASK_APP=node.py flask run
     """
-    webApp.run(host='127.0.0.1', port=5000)
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser()
+    parser.add_argument('-p', '--port', type=int, default=5000)
+    args = parser.parse_args()
+    port = args.port
+    wallet = Wallet(port) #Initialize a wallet in the object wallet
+    blockchain = BlockChain(wallet.public_key, port) #Initialize the blockchain of the wallet
+    webApp.run(host='127.0.0.1', port=port)
+    
