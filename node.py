@@ -19,6 +19,14 @@ def get_ui():
     return send_from_directory('ui', 'node.html')
 
 
+@webApp.route('/network', methods=['GET'])
+def get_network():
+    """
+    Returns the interface of the network UI
+    """
+    return send_from_directory('ui', 'network.html')
+
+
 @webApp.route('/transactions', methods=['GET'])
 def get_open_transation():
     """
@@ -223,7 +231,7 @@ def remove_node(node_url):
 @webApp.route('/nodes', methods=['GET'])
 def get_nodes():
     """
-    Get all the nodes in the network
+    Returns a JSON message with all the nodes in the network
     """
     nodes = blockchain.get_peer_nodes()
     response = {
