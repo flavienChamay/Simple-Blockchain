@@ -177,6 +177,9 @@ def mine():
 
 @webApp.route('/node', methods=['POST']) #POST because we want to add something to the server
 def add_node():
+    """
+    Returns a failure JSON response if there is no values in the request or if the node is not in the request. Returns a successfull JSON response if not with all the nodes on the network.
+    """
     # Extracts the values by accessing the request
     values = request.get_json()
     if not values:
@@ -196,6 +199,38 @@ def add_node():
         'all_nodes': blockchain.get_peer_nodes()
     }
     return jsonify(response), 201
+
+
+@webApp.route('/node/<node_url>', methods=['DELETE'])
+def remove_node(node_url):
+    """
+    Returns a message of success and all nodes of the current network if the node's url is correct, returns a message of failure if not
+    :param node_url: url of the node to be removed
+    """
+    if node_url == '' or node_url == None:
+        response = {
+            'message': 'No node found'
+        }
+        return jsonify(response), 400
+    blockchain.remove_peer_node(node_url)
+    response = {
+        'message': 'Node removed',
+        'all_nodes': blockchain.get_peer_nodes()
+    }
+    return jsonify(response), 200 
+
+
+@webApp.route('/nodes', methods=['GET'])
+def get_nodes():
+    """
+    Get all the nodes in the network
+    """
+    nodes = blockchain.get_peer_nodes()
+    response = {
+        'all_nodes': nodes
+    }
+    return jsonify(response), 200
+    
 
 if __name__ == '__main__':
     """

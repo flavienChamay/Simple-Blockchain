@@ -26,12 +26,12 @@ class BlockChain:
         self.chain = [genesis_block]
         # Unhandled transactions, private attribute
         self.__open_transactions = []
-        # Loading the data from file if it exists
-        self.load_data()
         # Name of the host of the blockchain
         self.hosting_node = hosting_node_id
         # Set of all the participants (nodes) in the network, private attribute
         self.__peer_nodes = set()
+       # Loading the data from file if it exists, must be at the end, after doing all above initialisations
+        self.load_data()
 
     @property
     def chain(self):
