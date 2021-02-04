@@ -238,6 +238,42 @@ def get_nodes():
     return jsonify(response), 200
     
 
+@webApp.route('/broadcast-transaction', methods=['POST'])
+def broadcast_transaction():
+    values = request.get_json()
+    #Verification if the values are not empty
+    if not values:
+        response = {
+            'message': 'No data found'
+        }
+        return jsonify(response), 400
+    required = ['sender', 'recipient', 'amount', 'signature']
+    #Verification if the values contains a sender, a recipient, an amount and a signature
+    if not all(key in values for key in required):
+        response = {
+            'message': 'Some data is missing'
+        }
+        return jsonify(response), 400
+    success = blockchain.add_transaction(values['recipient'], values['sender'], values['signature'], values['amount'], is_receiving=True)
+    if success:
+        response = {
+            'message' : 'Successfully added transaction.',
+            'transaction' : {
+                'sender' : values['sender'],
+                'recipient' : values['recipient'],
+                'amount' : values['amount'],
+                'signature' : values['signature']
+            }
+        }
+        return jsonify(response), 201 # we return the response and a success code
+    else: # If the transaction failed
+        response = {
+            'message' : 'Creating a transaction failed.',
+        }
+        return jsonify(response), 500 # Then we return the response and an internal server error 
+
+
+
 if __name__ == '__main__':
     """
     Condition that set the flask server to the localhost address : 127.0.0.1 or localhost

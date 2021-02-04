@@ -130,12 +130,13 @@ class BlockChain:
             return None
         return self.__chain[-1]
 
-    def add_transaction(self, recipient, sender, signature, amount=1.0):
+    def add_transaction(self, recipient, sender, signature, amount=1.0, is_receiving=False):
         """
         Add a value to the block chain list
         :param sender: the sender's name of the transaction
         :param recipient: the recipient's name of the transaction
         :param amount: the amount of the transaction (default = 1.0)
+        :param is_receiving: False when creating a new transaction on this node, True when receiving a broadcast transaction
         :return: True if transaction if verified, False if not
         """
         if self.public_key == None:
@@ -144,19 +145,21 @@ class BlockChain:
         if Verification.verify_transaction(transaction, self.get_balance):
             self.__open_transactions.append(transaction)
             self.save_data()
-            #Looping through all nodes to broadcast the infos:
-            for node in self.__peer_nodes:
-                url = 'http://{}/broadcast-transaction'.format(node)
-                try:
-                    response = requests.post(url, json={'sender': sender, 'recipient': recipient, 'amount': amount, 'signature': signature})
-                    if response.status_code == 400 or response.status_code == 500:
-                        print('Transaction declined, needs resolving')
-                        return False
-                except requests.exceptions.ConnectionError:
-                    continue
-            return True
-        else:
-            return False
+            if not is_receiving:
+                #Looping through all nodes to broadcast the infos:
+                for node in self.__peer_nodes:
+                    url = 'http://{}/broadcast-transaction'.format(node)
+                    try:
+                        response = requests.post(url, json={'sender': sender, 'recipient': recipient, 'amount': amount, 'signature': signature})
+                        if response.status_code == 400 or response.status_code == 500:
+                            print('Transaction declined, needs resolving')
+                            return False
+                    except requests.exceptions.ConnectionError:
+                        continue
+                    return True
+                else:
+                    return False
+                
 
     def mine_block(self):
         """
@@ -182,14 +185,17 @@ class BlockChain:
         self.save_data()
         return block
 
-    def get_balance(self):
+    def get_balance(self, sender=None):
         """
         Get the balance of a participant via his transactions
         :return: the balance between the amount received and the amount sent
         """
-        if self.public_key == None: # This tests if the public key exists (referenced by hositng_node)
-            return None
-        participant = self.public_key # Participant is a unique ID
+        if sender == None:
+            if self.public_key == None: # This tests if the public key exists (referenced by hositng_node)
+                return None
+            participant = self.public_key # Participant is a unique ID
+        else:
+            participant = sender
         tx_sender = [[tx.amount for tx in block.transactions
                       if tx.sender == participant] for block in self.__chain]
         open_tx_sender = [tx.amount for tx in self.__open_transactions
