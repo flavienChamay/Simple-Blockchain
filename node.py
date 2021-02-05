@@ -273,7 +273,39 @@ def broadcast_transaction():
         return jsonify(response), 500 # Then we return the response and an internal server error 
 
 
-
+@webApp.route('/broadcast-block', methods=['POST'])
+def broadcast_block():
+    """
+    Function that manages broadcasting blocks of the blockchain through the network
+    :returns: A failure if there is no blocks or if the request doesn't contains a block. A success if 
+    """
+    values = request.get_json()
+    #Verifications of the validity of the block
+    if not values:
+        response = {
+            'message': 'No data found'
+        }
+        return jsonify(response), 400
+    if 'block' not in values:
+        response = {
+            'message': 'Some data is missing'
+        }
+        return jsonify(response), 400
+    #Getting the block and checking its index with the index of the last block of the blockchain
+    block = values['block']
+    #Success case: we add the block
+    if block['index'] == blockchain.chain[-1].index + 1:
+        blockchain.add_block(block)
+    #
+    elif block['index'] > blockchain.chain[-1].index:
+        pass
+    #Error case
+    else:
+        response = {
+            'message': 'BlockChain seems to be shorter, block not added'
+        }
+        return jsonify(response), 409
+    
 if __name__ == '__main__':
     """
     Condition that set the flask server to the localhost address : 127.0.0.1 or localhost

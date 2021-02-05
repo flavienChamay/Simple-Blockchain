@@ -232,7 +232,26 @@ class BlockChain:
 
     def get_peer_nodes(self):
         """
-        Returns a list of all the connected peer nodes in the network
+        Function that gives all the connected peer nodes in the network
         :return: a list of all connected peer nodes.
         """
         return list(self.__peer_nodes)
+
+
+    def add_block(self, block):
+        """
+        Function that adds a block to the blockchain
+        :param block: the block to add to the blockchain
+        :returns: false if the block has not been added, true if it has
+        """
+        #Validation of the block
+        transactions = [Transaction(tx['sender'], tx['recipient'], tx['signature'], tx['amount']) for tx in block['transaction']]
+        proof_is_valid = Verification.valid_proof(transactions, block['previous_hash'], block['proof'])
+        hashes_match = hash_block(self.chain[-1]) == block['previous_hash']
+        if not proof_is_valid or not hashes_match:
+            return False
+        #Add the block
+        converted_block = Block(block['index'], block['previous_hash'], transactions, block['proof'], block['timestamp'])
+        self.__chain.append(converted_block)
+        self.save_data() 
+        return True
