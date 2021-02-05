@@ -293,9 +293,16 @@ def broadcast_block():
         return jsonify(response), 400
     #Getting the block and checking its index with the index of the last block of the blockchain
     block = values['block']
-    #Success case: we add the block
+    #Success case: we add the block and return a reponse
     if block['index'] == blockchain.chain[-1].index + 1:
-        blockchain.add_block(block)
+        if blockchain.add_block(block):
+            response = {
+                'message': 'Block added'
+            }
+            return jsonify(response), 201
+        else:
+            response = {'Message': 'Block seems invalid.'}
+            return jsonify(response), 500
     #
     elif block['index'] > blockchain.chain[-1].index:
         pass
