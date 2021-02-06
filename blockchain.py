@@ -139,8 +139,6 @@ class BlockChain:
         :param is_receiving: False when creating a new transaction on this node, True when receiving a broadcast transaction
         :return: True if transaction if verified, False if not
         """
-        if self.public_key == None:
-            return False
         transaction = Transaction(sender, recipient, signature, amount)
         if Verification.verify_transaction(transaction, self.get_balance):
             self.__open_transactions.append(transaction)
@@ -264,5 +262,14 @@ class BlockChain:
         #Add the block
         converted_block = Block(block['index'], block['previous_hash'], transactions, block['proof'], block['timestamp'])
         self.__chain.append(converted_block)
+        #Manage open transactions and forces them to update
+        stored_transactions = self.__open_transactions[:]
+        for itx in block['transactions']:
+            for opentx in stored_transactions:
+                if opentx.sender == itx['sender'] and opentx.recipient == itx['recipient'] and opentx.amount == itx['amount'] and opentx.signature == itx['signature']:
+                    try:
+                        self.__open_transactions.remove(opentx)
+                    except ValueError:
+                        print('Item was already removed')
         self.save_data() 
         return True
