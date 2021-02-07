@@ -127,4 +127,5 @@ dmypy.json
 # Ignore TXT files
 *.txt
 
-
+# Ignore all hidden files
+.*
