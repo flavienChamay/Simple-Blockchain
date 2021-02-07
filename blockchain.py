@@ -279,17 +279,33 @@ class BlockChain:
         return True
 
 
-    def to_resolve_conflicts():
+    def to_resolve_conflicts(self):
         """
         Function that resolve conflicts between nodes - Implementation of a consensus
+        :returns: Returns true if the blockchain has been replaced, false if not
         """
+        winner_chain = self.chain
+        replace = False # whether or not our blockchain has been replaced or not
         for node in self.__peer_nodes:
             url = 'https://{}/chain'.format(node)
             try:
                 response = requests.get(url)
                 node_chain = response.json()
                 node_chain = [Block(block['index'], block['previous_hash'], block['transactions'], block['proof'], block['timestamp']) for block in node_chain]
-                node_chain.transactions = []
-                
+                node_chain.transactions = [Transaction(tx['sender'], tx['recipient'], tx['signature'], tx['amount']) for tx in node_chain['transactions']]
+                node_chain_length = len(node_chain)
+                local_chain_length = len(self.chain)
+                if node_chain_length > local_chain_length and Verification.verify_chain(node_chain):
+                    winner_chain = node_chain # We update the valid chain for the longest valid
+                    replace = True
             except requests.exceptions.ConnectionError:
                 continue # We simply continue with the next peer node, we don't want to break the solving because of one node
+        self.resolve_conflicts = False # Because the conflict has been solved by above
+        self.chain = winner_chain
+        if replace:
+            self.__open_transactions = []
+        self.save_data()
+        return replace 
+        
+        
+        

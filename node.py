@@ -324,12 +324,33 @@ def broadcast_block():
             'message': 'BlockChain seems to be shorter, block not added'
         }
         return jsonify(response), 409
+
+
+@webApp.route('/resolve-conflicts', methods = ['POST'])
+def resolve_conflicts():
+    """
+    Function that try to solve a conflict in the network
+    :returns: a message that the chain was replaced or not
+    """
+    replaced = blockchain.to_resolve_conflicts()
+    if replaced:
+        response = {
+            'message': 'Chain was replaced'
+        }
+    else:
+        respones = {
+            'message': 'Local chain kept'
+        }
+    return jsonify(response), 200
     
 if __name__ == '__main__':
     """
     Condition that set the flask server to the localhost address : 127.0.0.1 or localhost
     To run it in the terminal write:
     FLASK_APP=node.py flask run
+    or:
+    python node.py -p (adressOfNode)
+    
     """
     from argparse import ArgumentParser
 
