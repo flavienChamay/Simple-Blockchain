@@ -163,6 +163,12 @@ def mine():
     """
     Function that updates the blockchain with mining a block
     """
+    # If there is a conflict to solve then we inform the user
+    if blockchain.resolve_conflicts:
+        response = {
+            'message': 'Resolve conflicts first, block not added.'
+        }
+        return jsonify(response), 409 # The 409 means that the user might resolve this conflict by himself
     block = blockchain.mine_block()
     if block != None: #in case of a success
         dict_block = block.__dict__.copy()
@@ -301,11 +307,17 @@ def broadcast_block():
             }
             return jsonify(response), 201
         else:
-            response = {'Message': 'Block seems invalid.'}
-            return jsonify(response), 500
+            response = {
+                'Message': 'Block seems invalid.'
+            }
+            return jsonify(response), 409 #409 for indicating a conflict
     #
     elif block['index'] > blockchain.chain[-1].index:
-        pass
+        response = {
+            'message': 'BlockChain seems to differ from local blockchain'
+        }
+        blockchain.resolve_conflicts = True # A conflict happens
+        return jsonify(response), 200 #Returns 200 because the error comes from the local node
     #Error case
     else:
         response = {

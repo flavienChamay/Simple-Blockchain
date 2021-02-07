@@ -35,7 +35,9 @@ class BlockChain:
         self.__peer_nodes = set()
         #ID of the node
         self.node_id = node_id
-       # Loading the data from file if it exists, must be at the end, after doing all above initialisations
+        # Manages to resolve conflicts, no conflicts to solve at initialisation 
+        self.resolve_conflicts = False
+        # Loading the data from file if it exists, must be at the end, after doing all above initialisations
         self.load_data()
 
     @property
@@ -132,7 +134,7 @@ class BlockChain:
 
     def add_transaction(self, recipient, sender, signature, amount=1.0, is_receiving=False):
         """
-        Add a value to the block chain list
+        Add a value to the block chain list and broadcasts the transactions into the network
         :param sender: the sender's name of the transaction
         :param recipient: the recipient's name of the transaction
         :param amount: the amount of the transaction (default = 1.0)
@@ -190,6 +192,8 @@ class BlockChain:
                 response = requests.post(url, json={'block': converted_block})
                 if response.status_code == 400 or response.status_code == 500:
                     print('Block declined, needs resolving')
+                if response.status_code == 409:
+                    self.resolve_conflicts = True
             except requests.exceptions.ConnectionError:
                 continue
         return block
