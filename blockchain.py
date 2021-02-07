@@ -277,3 +277,19 @@ class BlockChain:
                         print('Item was already removed')
         self.save_data() 
         return True
+
+
+    def to_resolve_conflicts():
+        """
+        Function that resolve conflicts between nodes - Implementation of a consensus
+        """
+        for node in self.__peer_nodes:
+            url = 'https://{}/chain'.format(node)
+            try:
+                response = requests.get(url)
+                node_chain = response.json()
+                node_chain = [Block(block['index'], block['previous_hash'], block['transactions'], block['proof'], block['timestamp']) for block in node_chain]
+                node_chain.transactions = []
+                
+            except requests.exceptions.ConnectionError:
+                continue # We simply continue with the next peer node, we don't want to break the solving because of one node
