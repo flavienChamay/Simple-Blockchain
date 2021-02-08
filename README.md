@@ -1,9 +1,47 @@
-# blockChainProject
-This project is an attempt to implement a basic blockchain in Python.
-The first motivation is for training purpose.
+# Simple Blockchain
+This project is an attempt to implement a basic blockchain.
 
+## Table of contents
+*
 
-All dependecies that you have to install: (try to use pip3 install <name_of_program>)
-flask
-flask-cors
-pycrypto is dead, use pycryptodome 3.9.9 instead
+## General info
+This project is for training purpose, it is not aimed to implement something usable in commerce or industry.
+Further personnal improvements will be added in the future, all of them for training purpose.
+I coded this blockchain to learn the technology and to solidify my knowledge in Python via online courses which this project is based on. 
+
+## Screenshots
+
+## Technologies
+* HTML - version 5
+* Python - version 3.8.5
+* flask - version 1.1.2
+* flask-cors - version 3.0.9
+* pycryptodome - version 3.9.9
+This project has been tested on Linux Manjaro Nibia 20.2.1
+All dependecies that you have to install: (try to use )
+
+## Installation / Setup
+
+### On Linux:
+Install dependencies with pip3 (like flsak, flask-cors and pycryptodome): pip3 install <name_of_dependency>
+For Python and HTML, they should be installed on your Linux machine by default.
+
+### On Windows:
+No tests have been launched on Windows for the moment.
+
+## Launch
+After all dependencies has been installed, launch the project with a terminal on the source folder and type:
+python node.py
+It will launch a wallet with the default port 5000.
+If you want to launch another waller with an adress of 5001, type:
+python node.py -p 5001
+You can launch as many wallet as you want. 
+
+## Status
+This project is _in progress_ because documentation is missing, other functionnalities and polishing.
+
+## Inspiration
+Project based on tutorials of Maxime from Academind
+
+## Contact
+Created by Flavien Chamay (thanks to Maxime) [flavien.chamay@protonmail.com](https://protonmail.com)
