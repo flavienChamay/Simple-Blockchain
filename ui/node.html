@@ -318,12 +318,10 @@
                 },
 		onResolve: function() {
 		    var vm = this
-                    axios.post('/mine')
+                    axios.post('/resolve-conflicts')
 			.then(function(response){
 			    vm.error = null;
 			    vm.success = response.data.message;
-			    console.log(response.data);
-			    vm.funds = response.data.funds;
 			})
 			.catch(function (error) {
 			    vm.success = null;
