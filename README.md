@@ -2,7 +2,14 @@
 This project is an attempt to implement a basic blockchain.
 
 ## Table of contents
-*
+* [General info](#general-info)
+* [Screenshots](#screenshots)
+* [Technologies](#technologies)
+* [Installation / Setup](#installation-/-setup)
+* [Launch](#launch)
+* [Status](#status)
+* [Inspiration](#inspiration)
+* [Contact](#contact)
 
 ## General info
 This project is for training purpose, it is not aimed to implement something usable in commerce or industry.
