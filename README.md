@@ -25,7 +25,7 @@ I coded this blockchain to learn the technology and to solidify my knowledge in 
 * flask-cors - version 3.0.9
 * pycryptodome - version 3.9.9
 
-## Installation / Setup
+## Setup
 This project has been only tested on Linux Manjaro Nibia 20.2.1.
 ### On Linux:
 Install dependencies with pip3 (like flsak, flask-cors and pycryptodome):
@@ -39,17 +39,21 @@ No tests have been launched on Windows for the moment.
 
 ## Launch
 After all dependencies has been installed, launch the project with a terminal on the source folder and type:
+```bash
 python node.py
+```
 It will launch a wallet with the default port 5000.
 If you want to launch another waller with an adress of 5001, type:
+```bash
 python node.py -p 5001
-You can launch as many wallet as you want. 
+```
+You can launch as many wallet as you want on separate terminals.
 
 ## Status
 This project is _in progress_ because documentation is missing, other functionnalities and polishing.
 
 ## Inspiration
-Project based on tutorials of Maxime from Academind
+Project based on tutorials of Maximilian from Academind
 
 ## Contact
-Created by Flavien Chamay (thanks to Maxime) [flavien.chamay@protonmail.com](https://protonmail.com)
+Created by Flavien Chamay (thanks to Maximilian) [flavien.chamay@protonmail.com](https://protonmail.com)
