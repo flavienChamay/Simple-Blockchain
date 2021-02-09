@@ -5,14 +5,14 @@ This project is an attempt to implement a basic blockchain.
 * [General info](#general-info)
 * [Screenshots](#screenshots)
 * [Technologies](#technologies)
-* [Installation / Setup](#installation-/-setup)
+* [Setup](#setup)
 * [Launch](#launch)
 * [Status](#status)
 * [Inspiration](#inspiration)
 * [Contact](#contact)
 
 ## General info
-This project is for training purpose, it is not aimed to implement something usable in commerce or industry.
+This project is for training purpose, it is not aimed to implement something for production.
 Further personnal improvements will be added in the future, all of them for training purpose.
 I coded this blockchain to learn the technology and to solidify my knowledge in Python via online courses which this project is based on. 
 
@@ -24,13 +24,14 @@ I coded this blockchain to learn the technology and to solidify my knowledge in 
 * flask - version 1.1.2
 * flask-cors - version 3.0.9
 * pycryptodome - version 3.9.9
-This project has been tested on Linux Manjaro Nibia 20.2.1
-All dependecies that you have to install: (try to use )
 
 ## Installation / Setup
-
+This project has been only tested on Linux Manjaro Nibia 20.2.1.
 ### On Linux:
-Install dependencies with pip3 (like flsak, flask-cors and pycryptodome): pip3 install <name_of_dependency>
+Install dependencies with pip3 (like flsak, flask-cors and pycryptodome):
+```bash
+pip3 install <name_of_dependency>
+```
 For Python and HTML, they should be installed on your Linux machine by default.
 
 ### On Windows:
