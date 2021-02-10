@@ -6,6 +6,7 @@ This project is an attempt to implement a basic blockchain.
 * [Screenshots](#screenshots)
 * [Technologies](#technologies)
 * [Setup](#setup)
+* [Features](#features)
 * [Launch](#launch)
 * [Status](#status)
 * [Inspiration](#inspiration)
@@ -17,6 +18,8 @@ Further personnal improvements will be added in the future, all of them for trai
 I coded this blockchain to learn the technology and to solidify my knowledge in Python via online courses which this project is based on. 
 
 ## Screenshots
+![FrontEnd wallet & blockchain](./screenshots/screenshotBlockchain1.png)
+![FrontEnd network manager](./screenshots/screenshotBlockchain2.png)
 
 ## Technologies
 * HTML - version 5
@@ -37,6 +40,21 @@ For Python and HTML, they should be installed on your Linux machine by default.
 ### On Windows:
 No tests have been launched on Windows for the moment.
 
+## Features
+* Chain of data
+* Mining of new blocks 
+* Hasing a block
+* Analyse and verify the chain
+* Transactions mechanisms
+* Store chain on disk
+* Node network
+* Wallets on text files
+
+To-do list:
+* Share data, resolve conflicts with consensus
+* Desktop frontend with PyQt
+* Replace with Django
+
 ## Launch
 After all dependencies has been installed, launch the project with a terminal on the source folder and type:
 ```bash
@@ -53,7 +71,7 @@ You can launch as many wallet as you want on separate terminals.
 This project is _in progress_ because documentation is missing, other functionnalities and polishing.
 
 ## Inspiration
-Project based on tutorials of Maximilian from Academind
+Project based on tutorials of [Maximilian Schwarzmuller](https://github.com/maxschwarzmueller) from Academind 
 
 ## Contact
-Created by Flavien Chamay (thanks to Maximilian) [flavien.chamay@protonmail.com](https://protonmail.com)
+Written by Flavien Chamay (thanks to Maximilian) [flavien.chamay@protonmail.com](https://protonmail.com)
