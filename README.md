@@ -9,7 +9,7 @@ This project is an attempt to implement a basic blockchain.
 * [Features](#features)
 * [Launch](#launch)
 * [Status](#status)
-* [Inspiration](#inspiration)
+* [Inspiration and Sources](#inspiration-and-sources)
 * [Contact](#contact)
 
 ## General info
@@ -29,7 +29,8 @@ I coded this blockchain to learn the technology and to solidify my knowledge in 
 * pycryptodome - version 3.9.9
 
 ## Setup
-This project has been only tested on Linux Manjaro Nibia 20.2.1.
+This project has been only tested on Linux Manjaro Nibia 20.2.1 and with Firefox 85.0 (64 bits).
+
 ### On Linux:
 Install dependencies with pip3 (like flsak, flask-cors and pycryptodome):
 ```bash
@@ -58,19 +59,29 @@ To-do list:
 ## Launch
 After all dependencies has been installed, launch the project with a terminal on the source folder and type:
 ```bash
+python node.py -p <port_number_of_wallet>
+```
+Without the `-p` option it will launch a wallet with the default port 5000.
+You can launch as many wallet as you want on separate terminals.
+
+## Code Example
+On a first terminal, launch a wallet of port number 5000:
+```bash
 python node.py
 ```
-It will launch a wallet with the default port 5000.
-If you want to launch another waller with an adress of 5001, type:
+Without closing the first terminal, open a second terminal and launch a wallet of port number 5001:
 ```bash
 python node.py -p 5001
 ```
-You can launch as many wallet as you want on separate terminals.
+URLs of each wallet should appear on each terminal and can be copied on a tab of your browser.
+In our example, on your browser (Firefox or Chrome) in one tab, write the url `127.0.0.1:5000`
+it will show your first wallet and on another tab write `127.0.0.1:5001` it will show your second wallet.
+From now, create a new wallet for each tab (by clicking on the blue button Create new Wallet), load the wallet (by clicking on the blue button Load Wallet), you can mine a block (by clicking on the green button Mine Coins), send a transaction to a recipient with the public key of the other wallet (in Recipient Key) and click the Send blue button to send.
 
 ## Status
 This project is _in progress_ because documentation is missing, other functionnalities and polishing.
 
-## Inspiration
+## Inspiration and Sources
 Project based on tutorials of [Maximilian Schwarzmuller](https://github.com/maxschwarzmueller) from Academind 
 
 ## Contact
