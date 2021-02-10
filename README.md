@@ -8,6 +8,7 @@ This project is an attempt to implement a basic blockchain.
 * [Setup](#setup)
 * [Features](#features)
 * [Launch](#launch)
+* [Code Example](#code-example)
 * [Status](#status)
 * [Inspiration and Sources](#inspiration-and-sources)
 * [Contact](#contact)
