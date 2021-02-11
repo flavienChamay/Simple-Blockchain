@@ -86,4 +86,4 @@ This project is _in progress_ because documentation is missing, other functionna
 Project based on tutorials of [Maximilian Schwarzmuller](https://github.com/maxschwarzmueller) from Academind 
 
 ## Contact
-Written by Flavien Chamay (thanks to Maximilian) [flavien.chamay@protonmail.com](https://protonmail.com)
+Written by [Flavien Chamay](flavien.chamay@protonmail.com) (thanks to Maximilian)
