@@ -55,7 +55,7 @@ No tests have been launched on Windows for the moment.
 To-do list:
 * Share data, resolve conflicts with consensus
 * Desktop frontend with PyQt
-* Replace with Django
+* Replace Flask with Django
 
 ## Launch
 After all dependencies has been installed, launch the project with a terminal on the source folder and type:
