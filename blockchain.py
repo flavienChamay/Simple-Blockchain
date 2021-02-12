@@ -101,7 +101,7 @@ class BlockChain:
         :var updated_blockchain list: The updated blockchain after loading after loading from the file.
         :var updated_transactions list: The updated transactions after loading from the file.
         :var peer_nodes dict: All peer nodes of the network red from the file.
-        :returns: None
+        :returns: None.
         :raises IOError: Error if the file is not properly red. 
         :raises IndexError: Error in the loops on the blocks or on the transactions.
         """
@@ -153,7 +153,7 @@ class BlockChain:
         """
         Get last block of the blockchain.
 
-        :returns list: The last block to the blockchain.
+        :returns list: The last block to the blockchain, None if its length is less than 1.
         """
         if len(self.__chain) < 1:
             return None
@@ -161,13 +161,15 @@ class BlockChain:
 
     def add_transaction(self, recipient, sender, signature, amount=1.0, is_receiving=False):
         """
-        Add a value to the block chain list and broadcasts the transactions into the network.
+        Add a transaction to the blockchain and broadcasts the transactions into the network.
 
-        :param sender: the sender's name of the transaction
-        :param recipient: the recipient's name of the transaction
-        :param amount: the amount of the transaction (default = 1.0)
+        :param sender str: the sender's name of the transaction
+        :param recipient str: the recipient's name of the transaction
+        :param signature str: Signature of the transaction.
+        :param amount: the amount of the transaction, Default=1.0.
         :param is_receiving: False when creating a new transaction on this node, True when receiving a broadcast transaction
-        :returns: True if transaction if verified, False if not
+        :returns: True if transaction if verified, False if not.
+        :raises ConnectionError: If the POST is not sent properly.
         """
         transaction = Transaction(sender, recipient, signature, amount)
         if Verification.verify_transaction(transaction, self.get_balance):
@@ -191,9 +193,15 @@ class BlockChain:
 
     def mine_block(self):
         """
-        Mine a block to the blockchain.
-
-        :return: True if the block has been successfully added to the blockchain
+        Mine a block for the blockchain.
+        :var last_block Block:
+        :var hashed_block str: Hash of the block.
+        :var proof int: Proof of work of the block. 0: valid, other: invalid.
+        :var reward_transaction Transaction: A transacion corresponding to a mining's action.
+        :var copied_transaction Transaction: A copy of the transactions of the blockchain.
+        :var block Block: 
+        :returns bool: True if the block has been successfully added to the blockchain, false if not.
+        :raised ConnectionError:
         """
         if self.public_key == None:
             return None
