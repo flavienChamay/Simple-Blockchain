@@ -1,5 +1,7 @@
 """
 Creation of the BlockChain module
+:class BlockChain: 
+:method 
 It allows the user to create a new blockchain, to get the chain, to set the chain, to get the open transactions in it, to save the new data in the blockchain, to get all the nodes in the network
 """
 
@@ -18,6 +20,27 @@ MINING_REWARD = 10  # Reward that we give to miners for creating a new block
 
 
 class BlockChain:
+    """
+    Blockchain class is used to create a blockchain, to update it, to verify it and broadcast it.
+
+    :method: __init__(self, public_key, node_id)
+    :method: chain(self)
+    :method: chain(self, val)
+    :method: get_open_transactions(self)
+    :method: save_data(self)
+    :method: load_data(self)
+    :method: proof_of_work(self)
+    :method: get_last_blockchain_value(self)
+    :method: add_transaction(self, recipient, sender, signature, amount=1.0, is_receiving=False)
+    :method: mine_block(self)
+    :method: get_balance(self, sender=None)
+    :method: add_peer_node(self, node)
+    :method: remove_peer_node(self, node)
+    :method: get_peer_nodes(self)
+    :method: add_block(self, block)
+    :method: to_resolve_conflicts(self)
+    """
+
     def __init__(self, public_key, node_id):
         """
         Initialize the blockchain with default values.
@@ -32,6 +55,7 @@ class BlockChain:
         :var resolve_conflicts bool: Manages resolving conflicts, no conflicts to solve at initialisation (False).
         :returns Block: Yields a blockchain's instance.
         """
+
         genesis_block = Block(0, '', [], 100, 0)
         self.chain = [genesis_block]
         self.__open_transactions = []
@@ -49,6 +73,7 @@ class BlockChain:
 
         :returns list: Chain of the blockchain.
         """
+
         return self.__chain[:]
 
     @chain.setter
@@ -59,6 +84,7 @@ class BlockChain:
         :param val list: New value of the blockchain.
         :returns: None.
         """
+
         self.__chain = val
 
     def get_open_transactions(self):
@@ -67,6 +93,7 @@ class BlockChain:
 
         :returns list: The open transactions.
         """
+
         return self.__open_transactions[:]
 
     def save_data(self):
@@ -78,6 +105,7 @@ class BlockChain:
         :returns: None.
         :raises IOError: If the file is not created or not written properly an error is raised and it prints a message that the saving has failed.
         """
+
         try:
             with open('blockchain-{}.txt'.format(self.node_id), mode='w') as file:
                 saveable_chain = [block.__dict__ for block in [Block(block_el.index, block_el.previous_hash, [
@@ -105,6 +133,7 @@ class BlockChain:
         :raises IOError: Error if the file is not properly red. 
         :raises IndexError: Error in the loops on the blocks or on the transactions.
         """
+
         try:
             with open('blockchain-{}.txt'.format(self.node_id), mode='r') as file:
                 file_content = file.readlines()
@@ -142,6 +171,7 @@ class BlockChain:
         :var proof int: The proof number of the blockchain initialised at 0.
         :returns int: If the proof equals 0 then the block is valid, if it not it is invalid.
         """
+
         last_block = self.__chain[-1]
         last_hash = hash_block(last_block)
         proof = 0
@@ -155,6 +185,7 @@ class BlockChain:
 
         :returns list: The last block to the blockchain, None if its length is less than 1.
         """
+
         if len(self.__chain) < 1:
             return None
         return self.__chain[-1]
@@ -171,6 +202,7 @@ class BlockChain:
         :returns: True if transaction if verified, False if not.
         :raises ConnectionError: If the POST is not sent properly.
         """
+
         transaction = Transaction(sender, recipient, signature, amount)
         if Verification.verify_transaction(transaction, self.get_balance):
             self.__open_transactions.append(transaction)
@@ -199,10 +231,11 @@ class BlockChain:
         :var proof int: Proof of work of the block. 0: valid, other: invalid.
         :var reward_transaction Transaction: A transacion corresponding to a mining's action.
         :var copied_transaction Transaction: A copy of the transactions of the blockchain.
-        :var block Block: 
+        :var block Block: Block created with the copied_transaction variable.
         :returns bool: True if the block has been successfully added to the blockchain, false if not.
-        :raised ConnectionError:
+        :raises ConnectionError: If the POST is not sent properly.
         """
+
         if self.public_key == None:
             return None
         last_block = self.__chain[-1]
@@ -240,15 +273,23 @@ class BlockChain:
 
     def get_balance(self, sender=None):
         """
-        Get the balance of a participant via his transactions.
+        Get the balance of a sender via his transactions.
 
-        :return: the balance between the amount received and the amount sent
+        :param sender str: The sender from whom the balance is requested. Default=None.
+        :var participant str: Equals to the sender if there is a sender, equals to the public key if not.
+        :var tx_sender list: All the transactions made by the participant.
+        :var open_tx_sender list: All the open transactions made by the participant.
+        :var amount_sent float: All of the amount sent for all of tx_sender.
+        :var tx_recipient list: All of the transactions made by the recipient.
+        :var amount_received float: All of the amount received for all of tx_recipient.
+        :returns float: The balance between the amount received and the amount sent.
         """
+
         if sender == None:
             # This tests if the public key exists (referenced by hositng_node)
             if self.public_key == None:
                 return None
-            participant = self.public_key  # Participant is a unique ID
+            participant = self.public_key
         else:
             participant = sender
         tx_sender = [[tx.amount for tx in block.transactions
@@ -270,18 +311,21 @@ class BlockChain:
         """
         Adds a new node to the network.
 
-        :return: None
-        :param node: The node URL which should be added
+        :param node: The node URL which should be added.
+        :returns: None.
         """
+
         self.__peer_nodes.add(node)
         self.save_data()
 
     def remove_peer_node(self, node):
         """
-        Removes a node to the network
-        :return: None
-        :param node: The node URL which should be removed
+        Removes a node to the network.
+
+        :param node: The node's URL which should be removed.
+        :returns: None.
         """
+
         self.__peer_nodes.discard(node)
         self.save_data()
 
@@ -289,17 +333,25 @@ class BlockChain:
         """
         Function that gives all the connected peer nodes in the network.
 
-        :return: a list of all connected peer nodes.
+        :returns list: List of all connected peer nodes in the network.
         """
+
         return list(self.__peer_nodes)
 
     def add_block(self, block):
         """
         Function that adds a block to the blockchain.
 
-        :param block: the block to add to the blockchain
-        :returns: false if the block has not been added, true if it has
+        :param block dict: The block to add to the blockchain.
+        :var transactions list: All transactions in the block.
+        :var proof_is_valid bool: True if the last transaction is valid, false if not.
+        :var hashes_match bool: True if the hash of the last block of the blockchain matches the hash of the block to add.
+        :var converted_block Block: Conversion of the block parameter into a Block class
+        :var stored_transactions list: Copy of the open transactions of the blockchain.
+        :returns bool: False if the block was not added, true if it was.
+        :raises ValueError: Error raised if the block has already been added.
         """
+
         # Validation of the block
         transactions = [Transaction(
             tx['sender'], tx['recipient'], tx['signature'], tx['amount']) for tx in block['transactions']]
@@ -328,10 +380,19 @@ class BlockChain:
         """
         Function that resolve conflicts between nodes - Implementation of a consensus.
 
+        :var winner_chain list: The blockchain with the greatest length.
+        :var replace bool: False if the blockchain is not replaced, true if it has.
+        :var url str: URL where to send a request.
+        :var response int (status code): Send a GET request to the URL.
+        :var node_chain int (status code), list: Nested list of the block of each peer nodes and the transactions of each peer nodes.
+        :var node_chain_length int: Length of the var node_chain.
+        :var local_chain_length int: Length of the current blockchain.
         :returns: Returns true if the blockchain has been replaced, false if not
+        :raises ConnectionError: If the request is not satisfied an error if raised.
         """
+
         winner_chain = self.chain
-        replace = False  # whether or not our blockchain has been replaced or not
+        replace = False
         for node in self.__peer_nodes:
             url = 'https://{}/chain'.format(node)
             try:
@@ -346,7 +407,7 @@ class BlockChain:
                     replace = True
             except requests.exceptions.ConnectionError:
                 continue  # We simply continue with the next peer node, we don't want to break the solving because of one node
-        self.resolve_conflicts = False  # Because the conflict has been solved by above
+        self.resolve_conflicts = False
         self.chain = winner_chain
         if replace:
             self.__open_transactions = []
