@@ -198,41 +198,45 @@ def get_balance():
     """
     This GET function gets the balance of the funds of the wallet via the '/balance' route.
 
-    :var balance float: The balance  requested by the wallet (or the node).
-    :response dict: 
-    :returns json:
+    :var balance float: The balance of the wallet (or the node) requested.
+    :response dict: The success or failure response send.
+    :returns json: A JSON response of 200 if the balance is successfully returned, 500 if it failed.
     """
 
     balance = blockchain.get_balance()
-    if balance != None:  # If the public key exists than we will return a success message and an error message if not
+    if balance != None:
         response = {
             'message': 'Fetched balance successfully.',
             'funds': balance
         }
-        # Return the response jsonify and an OK success code
         return jsonify(response), 200
     else:
         response = {
             'message': 'Loading balance failed.',
             'wallet_set_up': wallet.public_key != None
         }
-        return jsonify(response), 500  # Return the response and an error code
+        return jsonify(response), 500
 
 
 @webApp.route('/mine', methods=['POST'])
 def mine():
     """
-    Function that updates the blockchain with mining a block
+    This POST function mines a block and add it to the blockchain via the '/mine' route.
+
+    :var response dict: A success message containing the block and the funds of the new added block, or a failure message.
+    :var block Block: The new mined block to be added to the blockchain.
+    :var dict_block dict: The block var transformed into a dictionnary.
+    :returns json: A JSON response of 409 if there is a conflict to solve, a 500 response if adding the block failed and a 201 response if the block is added successfully plus the block and the funds.
     """
+
     # If there is a conflict to solve then we inform the user
     if blockchain.resolve_conflicts:
         response = {
             'message': 'Resolve conflicts first, block not added.'
         }
-        # The 409 means that the user might resolve this conflict by himself
         return jsonify(response), 409
     block = blockchain.mine_block()
-    if block != None:  # in case of a success
+    if block != None:  # In case of a success
         dict_block = block.__dict__.copy()
         dict_block['transactions'] = [
             tx.__dict__ for tx in dict_block['transactions']]
@@ -241,24 +245,26 @@ def mine():
             'block': dict_block,
             'funds': blockchain.get_balance()
         }
-        # returns the response and a success code indicating that the request has been fulfilled
         return jsonify(response), 201
-    else:  # in case of an error
+    else:
         response = {
             'message': 'Adding a block failed',
             'wallet_set_up': wallet.public_key != None
         }
-        # returns the response and a server error code of 500
         return jsonify(response), 500
 
 
-# POST because we want to add something to the server
 @webApp.route('/node', methods=['POST'])
 def add_node():
     """
-    Returns a failure JSON response if there is no values in the request or if the node is not in the request. Returns a successfull JSON response if not with all the nodes on the network.
+    This POST (because we want to add something to the server) function adds a new node into the network.
+
+    :var values json: Extracts the node's information by accessing the request.n
+    :var response dict: The response containing an error message or a success message with a list of all the peer nodes.
+    :var node Wallet: The node to be added to the network.
+    :returns json: A JSON failure response of 400 if there is no values in the request or if the node is not in the request, a 201 success response if the node is added successfully. 
     """
-    # Extracts the values by accessing the request
+
     values = request.get_json()
     if not values:
         response = {
@@ -282,9 +288,13 @@ def add_node():
 @webApp.route('/node/<node_url>', methods=['DELETE'])
 def remove_node(node_url):
     """
-    Returns a message of success and all nodes of the current network if the node's url is correct, returns a message of failure if not
-    :param node_url: url of the node to be removed
+    This DELETE function removes given node in the network via the '/node/<node_url>' route.
+
+    :param node_url str: URL of the node to be removed.
+    :var response dict: The response containing an error message or a message of success plus all the peer nodes.
+    :resturns json: A 400 failure message if no node has been found or a 200 success message if the node has been removed correctly.
     """
+
     if node_url == '' or node_url == None:
         response = {
             'message': 'No node found'
@@ -301,8 +311,12 @@ def remove_node(node_url):
 @webApp.route('/nodes', methods=['GET'])
 def get_nodes():
     """
-    Returns a JSON message with all the nodes in the network
+    This GET function gets all the nodes in the network via the '/nodes' route.
+
+    :var nodes list: List of all peer nodes of the network.
+    :returns json: A 200 JSON success response for all nodes being returned.
     """
+
     nodes = blockchain.get_peer_nodes()
     response = {
         'all_nodes': nodes
@@ -312,6 +326,13 @@ def get_nodes():
 
 @webApp.route('/broadcast-transaction', methods=['POST'])
 def broadcast_transaction():
+    """
+    This POST function broadcasts all transactions.
+
+    :var values:
+    :var required:
+    """
+
     values = request.get_json()
     # Verification if the values are not empty
     if not values:
