@@ -1,8 +1,6 @@
 """
-Creation of the BlockChain module
-:class BlockChain: 
-:method 
-It allows the user to create a new blockchain, to get the chain, to set the chain, to get the open transactions in it, to save the new data in the blockchain, to get all the nodes in the network
+This module implements the creation of a BlockChain. It allows the user to create a new blockchain, to get the chain, to set the chain, to get the open transactions in it, to save the new data in the blockchain, to get all the nodes in the network.
+:class BlockChain: Class of the blockchain.
 """
 
 import json

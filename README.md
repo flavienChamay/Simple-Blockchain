@@ -16,7 +16,7 @@ This project is an attempt to implement a basic blockchain.
 ## General info
 This project is for training purpose, it is not aimed to implement something for production.
 Further personnal improvements will be added in the future, all of them for training purpose.
-I coded this blockchain to learn the technology and to solidify my knowledge in Python via online courses which this project is based on. 
+I coded this blockchain to learn the technology and to solidify my knowledge in Python via online courses which this project is based on. You can see a documentation about the project in the pdf named [Documentation_Simple_Blockchain](https://github.com/flavienChamay/blockChainProject/blob/master/Documentation_Simple_Blockchain.pdf).
 
 ## Screenshots
 ![FrontEnd wallet & blockchain](./screenshots/screenshotBlockchain1.png)
