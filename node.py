@@ -22,7 +22,8 @@ This module contains the main program of this project.
 # request import is usefull to extract incoming requests from servers
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
-from argparse import ArgumentParser  # For the main program
+# To access the arguments at the launch of the program.
+from argparse import ArgumentParser
 
 from wallet import Wallet
 from blockchain import BlockChain

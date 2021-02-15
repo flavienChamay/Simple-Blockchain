@@ -1,5 +1,6 @@
 """
 This module implements the creation of a BlockChain. It allows the user to create a new blockchain, to get the chain, to set the chain, to get the open transactions in it, to save the new data in the blockchain, to get all the nodes in the network.
+
 :class BlockChain: Class of the blockchain.
 """
 
@@ -13,8 +14,8 @@ from transaction import Transaction
 from utility.verification import Verification
 from wallet import Wallet
 
-
-MINING_REWARD = 10  # Reward that we give to miners for creating a new block
+# Reward that we give to miners for creating a new block
+MINING_REWARD = 10
 
 
 class BlockChain:
@@ -41,7 +42,7 @@ class BlockChain:
 
     def __init__(self, public_key, node_id):
         """
-        Initialize the blockchain with default values.
+        Initialize the blockchain with input values.
 
         :param public_key str: The unique ID of the host of the blockchain.
         :param node_id int: ID of the node, represented by the port.
@@ -51,7 +52,7 @@ class BlockChain:
         :var genesis_block Block: The first block to be generated in a blockchain.
         :var peer_nodes set: Set of all the participants (nodes) in the network.
         :var resolve_conflicts bool: Manages resolving conflicts, no conflicts to solve at initialisation (False).
-        :returns Block: Yields a blockchain's instance.
+        :returns BlockChain: Yields a blockchain's instance.
         """
 
         genesis_block = Block(0, '', [], 100, 0)
