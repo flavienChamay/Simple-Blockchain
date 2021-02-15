@@ -22,6 +22,7 @@ This module contains the main program of this project.
 # request import is usefull to extract incoming requests from servers
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
+from argparse import ArgumentParser  # For the main program
 
 from wallet import Wallet
 from blockchain import BlockChain
@@ -314,6 +315,7 @@ def get_nodes():
     This GET function gets all the nodes in the network via the '/nodes' route.
 
     :var nodes list: List of all peer nodes of the network.
+    :var response dict: The response containing all peer nodes.
     :returns json: A 200 JSON success response for all nodes being returned.
     """
 
@@ -327,10 +329,13 @@ def get_nodes():
 @webApp.route('/broadcast-transaction', methods=['POST'])
 def broadcast_transaction():
     """
-    This POST function broadcasts all transactions.
+    This POST function broadcasts all transactions via the '/broadcast-transaction' route.
 
-    :var values:
-    :var required:
+    :var values json: Retrieving the transaction inside the request.
+    :var respone dict: Contains a message of failure if no data are found or are missing in the values var or the transaction is not correctly created , contains a success message if the transaction is broadcasted successfully plus the sender, recipient, amount and signature.
+    :var required list: List of the relevant infos ie the sender, the recipient, the amount and the signature.
+    :var success bool: True if the transaction has been added successfully, false if not.
+    :returns json: A 400 status code if the data are not found or some data is missing, a 500 status code if the transaction failed to be created, a 201 status code if the transaction is successfully added.
     """
 
     values = request.get_json()
@@ -359,22 +364,24 @@ def broadcast_transaction():
                 'signature': values['signature']
             }
         }
-        # we return the response and a success code
         return jsonify(response), 201
-    else:  # If the transaction failed
+    else:
         response = {
             'message': 'Creating a transaction failed.',
         }
-        # Then we return the response and an internal server error
         return jsonify(response), 500
 
 
 @webApp.route('/broadcast-block', methods=['POST'])
 def broadcast_block():
     """
-    Function that manages broadcasting blocks of the blockchain through the network
-    :returns: A failure if there is no blocks or if the request doesn't contains a block. A success if 
+    This POST function manages broadcasting blocks of the blockchain through the network.
+
+    :var values json: Retreiving the block inside the JSON request.
+    :var block Block: The block to be broadcasted.
+    :returns json: A 400 failure message if there is no block or if some data are missing, a 409 conflict message if the block seems invalid or the blockchain seems to be shorter. A 201 success message if the block is correctly added or a 200 message to signify that the error comes from the local node.
     """
+
     values = request.get_json()
     # Verifications of the validity of the block
     if not values:
@@ -389,7 +396,6 @@ def broadcast_block():
         return jsonify(response), 400
     # Getting the block and checking its index with the index of the last block of the blockchain
     block = values['block']
-    # Success case: we add the block and return a reponse
     if block['index'] == blockchain.chain[-1].index + 1:
         if blockchain.add_block(block):
             response = {
@@ -400,16 +406,14 @@ def broadcast_block():
             response = {
                 'Message': 'Block seems invalid.'
             }
-            return jsonify(response), 409  # 409 for indicating a conflict
+            return jsonify(response), 409
     #
     elif block['index'] > blockchain.chain[-1].index:
         response = {
             'message': 'BlockChain seems to differ from local blockchain'
         }
-        blockchain.resolve_conflicts = True  # A conflict happens
-        # Returns 200 because the error comes from the local node
+        blockchain.resolve_conflicts = True
         return jsonify(response), 200
-    # Error case
     else:
         response = {
             'message': 'BlockChain seems to be shorter, block not added'
@@ -420,9 +424,13 @@ def broadcast_block():
 @webApp.route('/resolve-conflicts', methods=['POST'])
 def resolve_conflicts():
     """
-    Function that try to solve a conflict in the network
-    :returns: a message that the chain was replaced or not
+    This POST function that try to solve a conflict in the network
+
+    :var replaced bool: True if there is a conflict to resolve and a blockchain to replace, false if not.
+    :var response dict: Indicating that the blockchain has been replaced or kept.
+    :returns json: A message that the chain was replaced or not.
     """
+
     replaced = blockchain.to_resolve_conflicts()
     if replaced:
         response = {
@@ -437,22 +445,17 @@ def resolve_conflicts():
 
 if __name__ == '__main__':
     """
-    Condition to set the flask server to the localhost address in the url bar of a browser:
-    `127.0.0.1`
-    or 
-    `localhost`
-    To run it in the terminal, write:
-    `FLASK_APP=node.py flask run`
-    or:
-    `python node.py -p <adress_of_node>`
+    Main program of the project.
+
+    How to use it (configuration of the flask server):
+    In the url bar of a browser, write: `127.0.0.1` or `localhost`
+    Then, in the terminal, write: `FLASK_APP=node.py flask run` or `python node.py -p <adress_of_node>` or `python node.py`
     """
-    from argparse import ArgumentParser
 
     parser = ArgumentParser()
     parser.add_argument('-p', '--port', type=int, default=5000)
     args = parser.parse_args()
     port = args.port
     wallet = Wallet(port)  # Initialize a wallet in the object wallet
-    # Initialize the blockchain of the wallet
     blockchain = BlockChain(wallet.public_key, port)
     webApp.run(host='127.0.0.1', port=port)
