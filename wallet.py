@@ -137,9 +137,9 @@ class Wallet:
         :var public_key str:
         :var verifier:
         :var h:
-        :returns :
+        :returns bool:
         """
-        # TODO: Need more information on the variables
+        # TODO: Need more information on the variables and all
 
         public_key = RSA.importKey(binascii.unhexlify(transaction.sender))
         verifier = PKCS1_v1_5.new(public_key)
