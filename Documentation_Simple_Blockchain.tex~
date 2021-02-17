@@ -1,0 +1,31 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+\usepackage[english]{babel}
+\usepackage[utf8x]{inputenc}
+
+\begin{document}
+\title{A Simple Blockchain Documentation}
+\author{Flavien Chamay}
+\data{\today}
+
+\makefile
+
+\section{A Little Theory on the blockchain technology}
+A blockchain is a distributed data storage composed of containers which are connected.
+\subsection{The Blocks}
+A container is represented by a block that can contain any type of data (In the case of a cryptocurrency, the data is a list of transactions). In a blockchain, the order of each block matters and each block know something about each other (via a hash).
+\subsection{The Hash}
+A hash is a string of text corresponding to a bunch of data. When you hash a data, it generates that string that uniquely identifies the data (for the same input you get the same hash). In a blockchain, each block has a hash that uniquely identifies it. Also, each block (except the first one) stores the hash of the previous block.
+The security mechanism of a blockchain appears when you change the previous blocks, the last block (with the true hash) will detect that the hash that it stores doesn't match the hash of the hacked previous blocks.
+\subsection{Transaction}
+Three informations are necessary to define a transaction: the sender, the recipient and the amount. 
+\subsection{The cryptocurrency}
+A cryptocurrency is based on the blockchain theory to operate. The coins transferred via the transactions form the cryptocurrency.
+\subsection{Verification of the blockchain}
+\subsection{The Transactions}
+\subsection{The Consensus}
+
+\section{Implementation of the blockchain}
+
+\end{document}

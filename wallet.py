@@ -114,7 +114,7 @@ class Wallet:
         :param sender str: The sender of the transaction.
         :param recipient str: The recipient of the transaction.
         :param amount float: The amount of the transaction.
-        :var signer: 
+        :var signer : 
         :var hash_payload:
         :var signature str:
         :returns str:
@@ -134,12 +134,11 @@ class Wallet:
         This staticmethod function verifies a transaction.
 
         :param transaction Transaction: The transaction to verify.
-        :var public_key str:
-        :var verifier:
-        :var h:
-        :returns bool:
+        :var public_key str: Imports the public key from the sender's transaction.
+        :var verifier PKCS115_Cipher: Create a cipher for performing PKCS#1 v1.5 decryption.
+        :var h SHA256: The hash of the transaction's sender, recipient and amount.
+        :returns bool: True if the transaction is verified, false if not.
         """
-        # TODO: Need more information on the variables and all
 
         public_key = RSA.importKey(binascii.unhexlify(transaction.sender))
         verifier = PKCS1_v1_5.new(public_key)
