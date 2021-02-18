@@ -28,12 +28,11 @@ class Wallet:
         """
         Initialize the wallet with input values.
 
-        :param node_id str: Unique identifier of the node.
+        :param node_id str: Unique identifier of the node (designated by the port number).
         :var private_key str: The private key of the wallet. Default=None.
         :var public_key str: The public key of the wallet. Default=None.
         :returns Wallet: Yields a wallet's instance.
         """
-        # TODO: See what is node_id in contrast to the public key.
 
         self.private_key = None
         self.public_key = None
@@ -114,12 +113,11 @@ class Wallet:
         :param sender str: The sender of the transaction.
         :param recipient str: The recipient of the transaction.
         :param amount float: The amount of the transaction.
-        :var signer : 
-        :var hash_payload:
-        :var signature str:
-        :returns str:
+        :var signer PKCS115_Cipher: Create a cipher for performing PKCS1 v1.5 descryption on the private key.
+        :var hash_payload SHA256: The hash of the transaction's sender, recipient and amount.
+        :var signature str: Signing the hash_payload var.
+        :returns str: The signature of the transaction in ASCII.
         """
-        # TODO: Need more information on the variables
 
         signer = PKCS1_v1_5.new(RSA.importKey(
             binascii.unhexlify(self.private_key)))
@@ -135,7 +133,7 @@ class Wallet:
 
         :param transaction Transaction: The transaction to verify.
         :var public_key str: Imports the public key from the sender's transaction.
-        :var verifier PKCS115_Cipher: Create a cipher for performing PKCS#1 v1.5 decryption.
+        :var verifier PKCS115_Cipher: Create a cipher for performing PKCS#1 v1.5 decryption on the public key.
         :var h SHA256: The hash of the transaction's sender, recipient and amount.
         :returns bool: True if the transaction is verified, false if not.
         """
