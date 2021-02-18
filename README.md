@@ -74,7 +74,7 @@ Without closing the first terminal, open a second terminal and launch a wallet o
 ```bash
 python node.py -p 5001
 ```
-URLs of each wallet should appear on each terminal and can be copied on a tab of your browser.
+The URL of each wallet should appear on each terminal and can be copied on a tab of your browser.
 In our example, on your browser (Firefox or Chrome) in one tab, write the url `127.0.0.1:5000`
 it will show your first wallet and on another tab write `127.0.0.1:5001` it will show your second wallet.
 From now, create a new wallet for each tab (by clicking on the blue button Create new Wallet), load the wallet (by clicking on the blue button Load Wallet), you can mine a block (by clicking on the green button Mine Coins), send a transaction to a recipient with the public key of the other wallet (in Recipient Key) and click the Send blue button to send.
