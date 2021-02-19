@@ -22,7 +22,7 @@ def hash_string_256(string):
 
 def hash_block(block):
     """
-    This function hashes a block and returns a string representation of it.
+    This function hashes a block by transforming it into a string and returns a string representation of it. 
 
     :param block Block: The block that will be hashed.
     :var hashable_block dict: The block that is transformed into a dictionary.
